@@ -40,7 +40,7 @@ class TestSearchSortingFiltering:
         )
 
     def test_sort_by_price_toggle(self, home_page: HomePage):
-        """Validates price sort toggle (High to Low and Low to High) with URL state verification."""
+        """Validates price sort toggle (High to Low and Low to High) with price ordering verification."""
         results_page = home_page.search_for("iPad")
         assert results_page.get_product_count() > 0
 
@@ -51,12 +51,32 @@ class TestSearchSortingFiltering:
         )
         assert results_page.get_product_count() > 0
 
+        # Verify prices are sorted correctly (low to high)
+        prices_with_ads = results_page.get_product_prices(limit=10, exclude_ad=False)
+        prices_without_ads = results_page.get_product_prices(limit=10, exclude_ad=True)
+
+        # Check that organic prices (without ads) are sorted correctly
+        if len(prices_without_ads) >= 2:
+            assert all(prices_without_ads[i] <= prices_without_ads[i+1]
+                      for i in range(len(prices_without_ads)-1)), \
+                f"Organic prices not sorted Low-to-High: {prices_without_ads}"
+
         # 2. Sort Price High to Low
         results_page.sort_by_price_high_to_low()
         assert "searchType=2" in results_page.get_current_url(), (
             f"Expected searchType=2 for High-to-Low sort: {results_page.get_current_url()}"
         )
         assert results_page.get_product_count() > 0
+
+        # Verify prices are sorted correctly (high to low)
+        prices_with_ads = results_page.get_product_prices(limit=10, exclude_ad=False)
+        prices_without_ads = results_page.get_product_prices(limit=10, exclude_ad=True)
+
+        # Check that organic prices (without ads) are sorted correctly
+        if len(prices_without_ads) >= 2:
+            assert all(prices_without_ads[i] >= prices_without_ads[i+1]
+                      for i in range(len(prices_without_ads)-1)), \
+                f"Organic prices not sorted High-to-Low: {prices_without_ads}"
 
     def test_attribute_filter_application(self, home_page: HomePage):
         """Validates applying an attribute filter (e.g. spec or brand) refines the search result set."""

@@ -12,14 +12,27 @@ class TestSearchEdgeCases:
     """Validates resilience against non-existent queries, empty inputs, and boundary strings."""
 
     def test_empty_search_submission(self, home_page: HomePage):
-        """Validates submitting an empty search query gracefully defaults to recommended search without error."""
+        """Validates that empty search submission does not trigger unrequested backend search."""
         home_page.clear_search_input()
         results_page = home_page.click_search_button()
 
-        # Momo shopping gracefully navigates to placeholder search
+        # Get the current URL after attempting empty search
         current_url = results_page.get_current_url()
-        assert "momoshop.com.tw" in current_url, "Browser should remain within Momo domain"
-        assert results_page.get_product_count() >= 0, "Page should load without breaking DOM"
+
+        # The core issue: empty search should NOT trigger a backend search with a keyword parameter
+        # Parse the URL to check for keyword parameter
+        from urllib.parse import urlparse, parse_qs
+        parsed_url = urlparse(current_url)
+        query_params = parse_qs(parsed_url.query)
+
+        # Verify that no keyword parameter is present in the URL
+        # This prevents the issue where empty search executes with a placeholder keyword
+        assert 'keyword' not in query_params, \
+            f"Empty search should not contain keyword parameter. URL: {current_url}, Query params: {query_params}"
+
+        # Additional verification: should remain on homepage or show validation error
+        # (Not navigating to search results with placeholder keyword)
+        assert "momoshop.com.tw" in current_url, "Should remain within Momo domain"
 
     @pytest.mark.parametrize("keyword", NON_EXISTENT_KEYWORDS)
     def test_non_existent_keyword_displays_friendly_no_result(self, home_page: HomePage, keyword: str):

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4249226c-6421-4bba-bf3a-46fca20176ec" name="Changes" comment="add pytest files for momo sdet search test automation suite">
+      <change afterPath="$PROJECT_DIR$/docs/momoshop_search_feature_test_cases.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/sdet_issue_report_template.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/issues_tracker/issue_001/FAIL_test_sort_by_price_toggle.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/base_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/base_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/home_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/home_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/search_results_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/search_results_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/screenshots/FAIL_test_secondary_search_from_results_page.png" beforeDir="false" afterPath="$PROJECT_DIR$/reports/screenshots/FAIL_test_secondary_search_from_results_page.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/screenshots/FAIL_test_sort_by_price_toggle.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/test_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/reports/test_report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_search_basic.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_search_basic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_search_edge_cases.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_search_edge_cases.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_search_sorting_filtering.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_search_sorting_filtering.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;chunyilu&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/chunyilu/Momo_SDET_assignment&quot;,
+    &quot;accountId&quot;: &quot;696f6be0-7a41-42e7-a139-3a070823e299&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.6336152647134305" />
+      <entry key="MS500" value="3.6974549173054783" />
+      <entry key="S2" value="9.633711369706353" />
+      <entry key="S5" value="17.393787360846297" />
+      <entry key="S10" value="22.743372819466877" />
+      <entry key="S30" value="28.562802461941615" />
+      <entry key="S60" value="34.27583854136822" />
+      <entry key="M2" value="44.82918889010715" />
+      <entry key="M5" value="78.1103742042938" />
+      <entry key="M10" value="122.3530943682439" />
+      <entry key="M15" value="149.24563319851276" />
+      <entry key="M30" value="186.85884970155368" />
+      <entry key="H1" value="211.10971664774985" />
+      <entry key="H2" value="224.9191367134989" />
+      <entry key="H4" value="232.29305257003807" />
+      <entry key="D1" value="238.69170705990123" />
+      <entry key="W1" value="239.8125090994856" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="3.366562225205491E-170" />
+      <entry key="S5" value="1.6250836569339013E-68" />
+      <entry key="S10" value="1.2767817523214705E-34" />
+      <entry key="S30" value="5.617208774046872E-12" />
+      <entry key="S60" value="3.0078427788350684E-6" />
+      <entry key="M2" value="0.0023721231758104012" />
+      <entry key="M5" value="0.13395757576283315" />
+      <entry key="M10" value="0.5168583550672707" />
+      <entry key="M15" value="0.8111814471291445" />
+      <entry key="M30" value="1.2735151498581336" />
+      <entry key="H1" value="1.5958776006161517" />
+      <entry key="H2" value="1.7865304299409268" />
+      <entry key="H4" value="1.8902494240842418" />
+      <entry key="D1" value="1.9812747148017245" />
+      <entry key="W1" value="1.997314145773763" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.534893454556056" />
+      <entry key="MS500" value="3.6522142386501906" />
+      <entry key="S2" value="9.593940972650037" />
+      <entry key="S5" value="17.354380318273492" />
+      <entry key="S10" value="22.71458507207716" />
+      <entry key="S30" value="28.550122178482784" />
+      <entry key="S60" value="34.26874796867529" />
+      <entry key="M2" value="44.82737701784501" />
+      <entry key="M5" value="78.23887263462281" />
+      <entry key="M10" value="122.86229276345941" />
+      <entry key="M15" value="150.04924997058654" />
+      <entry key="M30" value="188.12667775249116" />
+      <entry key="H1" value="212.7020926108991" />
+      <entry key="H2" value="226.703722570768" />
+      <entry key="H4" value="234.18227711854743" />
+      <entry key="D1" value="240.67280328003838" />
+      <entry key="W1" value="241.80979755277747" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="3IzUaStWT3JH7kMZ0yZx9xhKdHY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for tests.test_search_edge_cases.TestSearchEdgeCases.test_non_existent_keyword_displays_friendly_no_result.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for tests.test_search_mobile.TestSearchMobileBasic.test_mobile_search_ui_elements_present.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_popularity.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_price_toggle.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/chunyi/Documents/Momo_SDET_assignment&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs" />
+      <recent name="$PROJECT_DIR$/issues_tracker/issue_004" />
+      <recent name="$PROJECT_DIR$/issues_tracker/issue_001" />
+      <recent name="$PROJECT_DIR$/issues_tracker" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Python tests for tests.test_search_mobile.TestSearchMobileBasic.test_mobile_search_ui_elements_present">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="Momo_SDET_assignment" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_search_edge_cases.TestSearchEdgeCases.test_non_existent_keyword_displays_friendly_no_result" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Momo_SDET_assignment" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_search_edge_cases.TestSearchEdgeCases.test_non_existent_keyword_displays_friendly_no_result&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_search_mobile.TestSearchMobileBasic.test_mobile_search_ui_elements_present" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Momo_SDET_assignment" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_search_mobile.TestSearchMobileBasic.test_mobile_search_ui_elements_present&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_popularity" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Momo_SDET_assignment" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_popularity&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_price_toggle" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Momo_SDET_assignment" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_price_toggle&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Python tests for tests.test_search_mobile.TestSearchMobileBasic.test_mobile_search_ui_elements_present" />
+        <item itemvalue="Python tests.Python tests for tests.test_search_edge_cases.TestSearchEdgeCases.test_non_existent_keyword_displays_friendly_no_result" />
+        <item itemvalue="Python tests.Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_price_toggle" />
+        <item itemvalue="Python tests.Python tests for tests.test_search_sorting_filtering.TestSearchSortingFiltering.test_sort_by_popularity" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PY-262.10315.174" />
+        <option value="bundled-python-sdk-eff1e8def5f5-5bd6d13a2a75-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-262.10315.174" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4249226c-6421-4bba-bf3a-46fca20176ec" name="Changes" comment="" />
+      <created>1788766956715</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1788766956715</updated>
+      <workItem from="1788766959025" duration="4363000" />
+      <workItem from="1788832416755" duration="1497000" />
+      <workItem from="1788887495832" duration="380000" />
+      <workItem from="1788887895497" duration="2029000" />
+      <workItem from="1788889991007" duration="1412000" />
+      <workItem from="1788916027353" duration="12170000" />
+      <workItem from="1789008677863" duration="3028000" />
+      <workItem from="1789029168780" duration="2286000" />
+      <workItem from="1789038198660" duration="10144000" />
+      <workItem from="1789094662231" duration="1034000" />
+      <workItem from="1789095859144" duration="4021000" />
+    </task>
+    <task id="LOCAL-00001" summary="add pytest files for momo sdet search test automation suite">
+      <option name="closed" value="true" />
+      <created>1788833972340</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1788833972340</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add pytest files for momo sdet search test automation suite" />
+    <option name="LAST_COMMIT_MESSAGE" value="add pytest files for momo sdet search test automation suite" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Momo_SDET_assignment$.coverage" NAME=" Coverage Results" MODIFIED="1789009995107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
