@@ -40,7 +40,7 @@ case "$MODE" in
         ;;
     headed)
         echo "Running Tests in Headed Mode..."
-        HEADLESS=false "$VENV_PYTEST" --browser-headless=false
+        HEADLESS=false "$VENV_PYTEST" --browser-headless=true
         ;;
     all)
         echo "Running Complete Test Suite..."

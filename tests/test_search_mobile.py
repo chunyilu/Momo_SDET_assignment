@@ -11,7 +11,7 @@ def mobile_page(playwright: Playwright) -> Page:
     """Create a mobile browser context using iPhone 14 device emulation."""
     mobile_device = playwright.devices['iPhone 14']
     browser = playwright.chromium.launch(
-        headless=False,  # Can be overridden by environment variable
+        headless=True,  # Can be overridden by environment variable
         slow_mo=0,
         args=[
             "--disable-blink-features=AutomationControlled",
