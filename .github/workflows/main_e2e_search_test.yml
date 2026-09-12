@@ -13,33 +13,36 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Run different test categories in parallel
         include:
-          - { name: 'Desktop Smoke', marker: 'smoke' }
-          - { name: 'Mobile Tests', marker: 'mobile' }
-          - { name: 'Functional Tests', marker: 'functional' }
-          - { name: 'Performance Tests', marker: 'performance' }
-          - { name: 'Security Tests', marker: 'security or security_advanced' }
-          - { name: 'UI/UX Tests', marker: 'ui_ux' }
-          
+          - { name: 'Desktop Smoke', id: 'desktop-smoke', marker: 'smoke' }
+          - { name: 'Mobile Tests', id: 'mobile', marker: 'mobile' }
+          - { name: 'Functional Tests', id: 'functional', marker: 'functional' }
+          - { name: 'Performance Tests', id: 'performance', marker: 'performance' }
+          - { name: 'Security Tests', id: 'security', marker: 'security or security_advanced' }
+          - { name: 'UI/UX Tests', id: 'ui-ux', marker: 'ui_ux' }
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
           cache: 'pip'
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           playwright install --with-deps chromium
-      - name: Execute {{ matrix.name }}
-        run: pytest -m "{{ matrix.marker }}" --tb=short
+
+      - name: Execute ${{ matrix.name }}
+        run: pytest -m "${{ matrix.marker }}" --tb=short
+
       - name: Upload Test Report & Screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-{{ matrix.name }}
+          name: test-artifacts-${{ matrix.id }}
           path: |
             reports/test_report*.html
             reports/screenshots/
