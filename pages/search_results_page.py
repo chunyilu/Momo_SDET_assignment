@@ -2,6 +2,7 @@
 
 import re
 import urllib.parse
+import math
 from typing import List, Optional
 from playwright.sync_api import Page, Locator
 from pages.base_page import BasePage
@@ -566,102 +567,131 @@ class SearchResultsPage(BasePage):
 
     def get_product_prices(self, limit: int = 30, exclude_ad: bool = False) -> List[int]:
         """Extracts and parses integer prices of displayed products."""
-        # Wait for overlays to disappear before counting
+        # Wait for overlays to disappear
         self._wait_for_overlays_to_disappear()
 
-        # Wait for product elements to be present
+        # Wait briefly for products to load
+        self.page.wait_for_timeout(2000)
+
+        # Extract prices using JavaScript evaluation
         try:
-            self.page.wait_for_selector(
-                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
-                timeout=8000
-            )
-        except TimeoutError:
-            # If timeout, continue anyway - might be slow loading
+            js_prices = self.page.evaluate(f"""
+                () => {{
+                    const prices = [];
+                    const items = document.querySelectorAll(".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item");
+                    const limit = {limit};
+
+                    for (let i = 0; i < Math.min(items.length, limit); i++) {{
+                        const item = items[i];
+                        let price = null;
+
+                        // Try common price selectors
+                        const selectors = ['.price', '[class*="price"]', '.money', '[class*="money"]', 'span', 'b'];
+
+                        for (const selector of selectors) {{
+                            const elements = item.querySelectorAll(selector);
+                            for (let j = 0; j < Math.min(elements.length, 2); j++) {{
+                                const text = elements[j]?.innerText?.trim();
+                                if (text && text.length > 0) {{
+                                    // Extract digits and decimal points only
+                                    const numMatch = text.match(/[\\d,]+\\.?\\d*/);
+                                    if (numMatch) {{
+                                        const numStr = numMatch[0].replace(/,/g, '');
+                                        const priceFloat = parseFloat(numStr);
+                                        const priceInt = Math.floor(priceFloat);
+                                        if (!isNaN(priceInt) && priceInt > 0 && priceInt < 1000000) {{
+                                            price = priceInt;
+                                            break;
+                                        }}
+                                    }}
+                                }}
+                            }}
+                            if (price !== null) break;
+                        }}
+
+                        // Fallback: extract from item text
+                        if (price === null) {{
+                            const itemText = item.innerText;
+                            if (itemText) {{
+                                // Look for sequences of digits that look like prices
+                                const numMatches = itemText.match(/\\b\\d{{2,6}}\\b/g);
+                                if (numMatches) {{
+                                    for (const numStr of numMatches) {{
+                                        const priceInt = parseInt(numStr, 10);
+                                        // Filter for reasonable price range and exclude obvious non-prices
+                                        if (!isNaN(priceInt) &&
+                                            priceInt >= 50 &&      // Minimum reasonable price
+                                            priceInt <= 500000 &&  // Maximum reasonable price
+                                            priceInt !== 2024 &&   // Exclude years
+                                            priceInt !== 2025 &&   // Exclude years
+                                            priceInt !== 12 &&     // Exclude months
+                                            priceInt !== 24 &&     // Exclude hours
+                                            priceInt !== 60) {{
+                                            price = priceInt;
+                                            break;
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }}
+
+                        if (price !== null) {{
+                            prices.push(price);
+                        }}
+                    }}
+                    return prices;
+                }}
+            """)
+
+            print(f"[DEBUG] JavaScript extracted prices: {js_prices}")
+            if js_prices and len(js_prices) > 0:
+                # Validate prices
+                valid_prices = [p for p in js_prices if isinstance(p, (int, float)) and not (isinstance(p, float) and math.isnan(p)) and 0 < p < 1000000]
+                # Convert to int if needed
+                valid_prices = [int(p) for p in valid_prices]
+                if valid_prices:
+                    print(f"[DEBUG] Valid prices after validation: {valid_prices}")
+                    return valid_prices[:limit]
+        except Exception as e:
+            print(f"[DEBUG] JavaScript price extraction failed: {e}")
+            # If JavaScript fails, fall back to simple text extraction
             pass
 
+        # Fallback: Simple text-based extraction
         prices: List[int] = []
         total_items = self._get_product_elements().count()
+        print(f"[DEBUG] Fallback: total product items found: {total_items}")
 
         for i in range(total_items):
-            # Wait for overlays to disappear before accessing each item
-            self._wait_for_overlays_to_disappear()
-
             if len(prices) >= limit:
                 break
 
             item = self._get_product_elements().nth(i)
-            # Wait for content to load
-            self.page.wait_for_timeout(2000)
-
-            # Try multiple strategies to extract price
-            item_text = item.inner_text()
-            if not item_text.strip():
-                continue
-
-            # Strategy 1: Look for common price patterns with currency symbols
-            price_found = False
-            import re
-
-            # Pattern 1: Currency symbol followed by number with optional commas/decimals
-            patterns = [
-                r'(?:NT\\$|\\$)\\s*\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?',  # NT$1,299.00 or $1,299.00
-                r'\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?\\s*(?:NT\\$|\\$)',  # 1,299.00 NT$ or 1,299.00 $
-                r'\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?'               # 1,299.00 or 1299
-            ]
-
-            for pattern in patterns:
-                matches = re.findall(pattern, item_text)
-                for match in matches:
-                    try:
-                        # Extract just the number part
-                        number_part = re.sub(r'[^\\d.]', '', match)
-                        if number_part:
-                            val = float(number_part)
-                            price_int = int(val)
-                            if 0 < price_int < 500000:  # Reasonable price range
-                                prices.append(price_int)
-                                price_found = True
-                                break
-                    except ValueError:
-                        continue
-                if price_found:
-                    break
-
-            # Strategy 2: If no currency symbol price found, try extracting all digits
-            if not price_found:
-                # Extract all digits
-                digits_only = re.sub(r'[^\\d]', '', item_text)
-                # Look for sequences of 2-8 digits that could be prices
-                digit_sequences = re.findall(r'\\d{2,8}', digits_only)
-                for seq in digit_sequences:
-                    try:
-                        val = int(seq)
-                        if 0 < val < 500000:  # Reasonable price range
-                            prices.append(val)
-                            price_found = True
-                            break
-                    except ValueError:
-                        continue
-
-            # Strategy 3: As a last resort, try the original approach
-            if not price_found:
-                spans = item.locator("span, b, p").all()
-                for s in spans:
-                    text = s.inner_text().strip()
-                    # Remove commas and try to match 2-7 digits
-                    text_no_commas = text.replace(",", "")
-                    match = re.search(r"^\\d{2,7}$", text_no_commas)
-                    if match:
+            try:
+                item_text = item.inner_text()
+                print(f"[DEBUG] Item {i} text: {item_text[:200]}")  # Limit to 200 chars
+                if item_text:
+                    import re
+                    # Find all sequences of digits
+                    digit_matches = re.findall(r'\\b\\d{2,6}\\b', item_text)
+                    print(f"[DEBUG] Item {i} digit matches: {digit_matches}")
+                    for match in digit_matches:
                         try:
-                            val = int(match.group(0))
-                            if 0 < val < 500000:
-                                prices.append(val)
-                                price_found = True
-                                break
+                            price_int = int(match)
+                            if 50 <= price_int <= 500000 and price_int not in [2024, 2025, 12, 24, 60]:
+                                prices.append(price_int)
+                                print(f"[DEBUG] Item {i} accepted price: {price_int}")
+                                break  # Take first valid price per item
+                            else:
+                                print(f"[DEBUG] Item {i} rejected price {price_int} (out of range or excluded)")
                         except ValueError:
+                            print(f"[DEBUG] Item {i} failed to convert {match} to int")
                             continue
-                if price_found:
-                    break
+            except Exception as e:
+                print(f"[DEBUG] Item {i} caused exception: {e}")
+                continue  # Skip problematic items
+
+        print(f"[DEBUG] Final prices list: {prices}")
         return prices
 
     def is_no_results_found(self) -> bool:

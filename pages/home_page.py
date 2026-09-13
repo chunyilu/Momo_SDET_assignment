@@ -13,9 +13,6 @@ class HomePage(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
 
-    def __init__(self, page: Page):
-        super().__init__(page)
-
     def _wait_for_overlays_to_hidden(self, timeout: int = 20000) -> None:
         """Wait for common overlays to disappear to avoid interaction interception."""
         overlay_selectors = [
