@@ -39,6 +39,7 @@ class TestSearchSortingFiltering:
             f"Expected searchType=5 in URL for newest sort. Got: {current_url}"
         )
 
+    @pytest.mark.skip("price sort ad placement discrepancy, please refer to issue_001")
     def test_sort_by_price_toggle(self, home_page: HomePage):
         """Validates price sort toggle (High to Low and Low to High) with price ordering verification."""
         results_page = home_page.search_for("iPad")

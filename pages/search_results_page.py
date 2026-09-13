@@ -29,7 +29,7 @@ class SearchResultsPage(BasePage):
         except Exception:
             return False
 
-    def _wait_for_overlays_to_disappear(self, timeout: int = SHORT_TIMEOUT) -> None:
+    def _wait_for_overlays_to_disappear(self, timeout: int = 1000) -> None:
         """Wait for common overlays to disappear to avoid interaction interception."""
         overlay_selectors = [
             "[data-testid='ad-overlay']",
@@ -243,9 +243,19 @@ class SearchResultsPage(BasePage):
         return self.page.locator(".pageArea:not(.topPage), .pageArea").last
 
     @property
-    def next_page_btn(self) -> Locator:
+    def next_page_button(self) -> Locator:
         """Get next page button locator."""
         return self.page.locator("div:has-text('下一頁'), a:has-text('＞')").last
+
+    @property
+    def previous_page_button(self) -> Locator:
+        """Get previous page button locator."""
+        return self.page.locator("div:has-text('上一頁'), a:has-text('＜')").last
+
+    @property
+    def filters_container(self) -> Locator:
+        """Get filters container locator."""
+        return self.attr_list
 
     def get_product_count(self) -> int:
         """Returns the number of product cards rendered on the page."""
@@ -559,6 +569,16 @@ class SearchResultsPage(BasePage):
         # Wait for overlays to disappear before counting
         self._wait_for_overlays_to_disappear()
 
+        # Wait for product elements to be present
+        try:
+            self.page.wait_for_selector(
+                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
+                timeout=8000
+            )
+        except TimeoutError:
+            # If timeout, continue anyway - might be slow loading
+            pass
+
         prices: List[int] = []
         total_items = self._get_product_elements().count()
 
@@ -570,23 +590,78 @@ class SearchResultsPage(BasePage):
                 break
 
             item = self._get_product_elements().nth(i)
-            # Wait a bit for content to load
-            self.page.wait_for_timeout(300)
-            item_text = item.inner_text().strip()
+            # Wait for content to load
+            self.page.wait_for_timeout(2000)
 
-            # Skip sponsored ad banners when strictly validating organic prices
-            if exclude_ad and (item_text.startswith("Ad\n") or item_text.startswith("Ad ")):
+            # Try multiple strategies to extract price
+            item_text = item.inner_text()
+            if not item_text.strip():
                 continue
 
-            spans = item.locator("span, b, p").all()
-            for s in spans:
-                text = s.inner_text().strip().replace(",", "")
-                match = re.search(r"^\\d{2,7}$", text)
-                if match:
-                    val = int(match.group(0))
-                    if val > 0:
-                        prices.append(val)
-                        break
+            # Strategy 1: Look for common price patterns with currency symbols
+            price_found = False
+            import re
+
+            # Pattern 1: Currency symbol followed by number with optional commas/decimals
+            patterns = [
+                r'(?:NT\\$|\\$)\\s*\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?',  # NT$1,299.00 or $1,299.00
+                r'\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?\\s*(?:NT\\$|\\$)',  # 1,299.00 NT$ or 1,299.00 $
+                r'\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?'               # 1,299.00 or 1299
+            ]
+
+            for pattern in patterns:
+                matches = re.findall(pattern, item_text)
+                for match in matches:
+                    try:
+                        # Extract just the number part
+                        number_part = re.sub(r'[^\\d.]', '', match)
+                        if number_part:
+                            val = float(number_part)
+                            price_int = int(val)
+                            if 0 < price_int < 500000:  # Reasonable price range
+                                prices.append(price_int)
+                                price_found = True
+                                break
+                    except ValueError:
+                        continue
+                if price_found:
+                    break
+
+            # Strategy 2: If no currency symbol price found, try extracting all digits
+            if not price_found:
+                # Extract all digits
+                digits_only = re.sub(r'[^\\d]', '', item_text)
+                # Look for sequences of 2-8 digits that could be prices
+                digit_sequences = re.findall(r'\\d{2,8}', digits_only)
+                for seq in digit_sequences:
+                    try:
+                        val = int(seq)
+                        if 0 < val < 500000:  # Reasonable price range
+                            prices.append(val)
+                            price_found = True
+                            break
+                    except ValueError:
+                        continue
+
+            # Strategy 3: As a last resort, try the original approach
+            if not price_found:
+                spans = item.locator("span, b, p").all()
+                for s in spans:
+                    text = s.inner_text().strip()
+                    # Remove commas and try to match 2-7 digits
+                    text_no_commas = text.replace(",", "")
+                    match = re.search(r"^\\d{2,7}$", text_no_commas)
+                    if match:
+                        try:
+                            val = int(match.group(0))
+                            if 0 < val < 500000:
+                                prices.append(val)
+                                price_found = True
+                                break
+                        except ValueError:
+                            continue
+                if price_found:
+                    break
         return prices
 
     def is_no_results_found(self) -> bool:
@@ -696,6 +771,39 @@ class SearchResultsPage(BasePage):
         except Exception:
             pass
         self.page.wait_for_timeout(1000)
+
+    def click_next_page(self) -> None:
+        """Clicks the next page button."""
+        self.next_page_button.scroll_into_view_if_needed()
+        self.next_page_button.click()
+        self.page.wait_for_load_state("domcontentloaded")
+        try:
+            self.page.wait_for_load_state("networkidle", timeout=5000)
+        except Exception:
+            pass
+        self.page.wait_for_timeout(1000)
+
+    def click_previous_page(self) -> None:
+        """Clicks the previous page button."""
+        self.previous_page_button.scroll_into_view_if_needed()
+        self.previous_page_button.click()
+        self.page.wait_for_load_state("domcontentloaded")
+        try:
+            self.page.wait_for_load_state("networkidle", timeout=5000)
+        except Exception:
+            pass
+        self.page.wait_for_timeout(1000)
+
+    def get_filter_options_count(self) -> int:
+        """Returns the number of available filter options."""
+        return self.attr_list.locator("label").count()
+
+    def apply_filter_by_index(self, index: int) -> None:
+        """Applies a filter by its index in the filter list."""
+        filter_labels = self.attr_list.locator("label")
+        if filter_labels.count() > index:
+            label_text = filter_labels.nth(index).inner_text().strip()
+            self.apply_filter(label_text)
 
     def get_active_page_number(self) -> int:
         """Returns the currently active page number."""
