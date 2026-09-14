@@ -12,6 +12,23 @@ from config.config import SHORT_TIMEOUT, DEFAULT_TIMEOUT
 class SearchResultsPage(BasePage):
     """Encapsulates locators and user actions on Momo Search Results Page."""
 
+    # Momo renders a separate card structure for the mobile site.  Keep these
+    # selectors together so every product helper interrogates the same cards.
+    PRODUCT_ITEM_SELECTOR = (
+        ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item, "
+        ".mobile .home article > ul > li"
+    )
+    PRODUCT_TITLE_SELECTORS = [
+        ".content-info__goods-title-box h3",
+        ".content-info__goods-title-box",
+        ".product-title",
+        ".goods-title",
+        "[class*='title']",
+        "img[alt]",
+        ".product-name",
+        ".goods-name",
+    ]
+
     def __init__(self, page: Page):
         super().__init__(page)
 
@@ -48,23 +65,12 @@ class SearchResultsPage(BasePage):
 
     def _get_product_elements(self) -> Locator:
         """Get product item locator with flexible selectors."""
-        return self.page.locator(
-            ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item"
-        )
+        return self.page.locator(self.PRODUCT_ITEM_SELECTOR)
 
     def _extract_product_title(self, item: Locator) -> str:
         """Extract meaningful title from a product item element."""
         # Try multiple selectors for product title
-        title_selectors = [
-            ".product-title",
-            ".goods-title",
-            "[class*='title']",
-            "img[alt]",
-            ".product-name",
-            ".goods-name"
-        ]
-
-        for title_selector in title_selectors:
+        for title_selector in self.PRODUCT_TITLE_SELECTORS:
             title_element = item.locator(title_selector).first
             if title_element.count() > 0:
                 title_text = title_element.inner_text().strip()
@@ -255,8 +261,8 @@ class SearchResultsPage(BasePage):
 
     @property
     def filters_container(self) -> Locator:
-        """Get filters container locator."""
-        return self.attr_list
+        """Get the mobile or desktop filters container."""
+        return self.page.locator(".filterMenu, .filterWindow, #attrList, .attrList").first
 
     def get_product_count(self) -> int:
         """Returns the number of product cards rendered on the page."""
@@ -269,7 +275,7 @@ class SearchResultsPage(BasePage):
         # Strategy 1: Wait for product items with increased timeout
         try:
             self.page.wait_for_selector(
-                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
+                self.PRODUCT_ITEM_SELECTOR,
                 timeout=10000  # Reasonable timeout for mobile
             )
 
@@ -296,6 +302,7 @@ class SearchResultsPage(BasePage):
                         '[id^="search-goods-item-"]',
                         '.productItem',
                         '.goods-item',
+                        '.mobile .home article > ul > li',
                         '.item',
                         '[class*="product"]',
                         '[class*="goods"]',
@@ -351,7 +358,7 @@ class SearchResultsPage(BasePage):
         # Strategy 3: Final fallback with original selectors and reasonable timeout
         try:
             self.page.wait_for_selector(
-                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
+                self.PRODUCT_ITEM_SELECTOR,
                 timeout=8000
             )
             # Wait for overlays to disappear before final count
@@ -371,7 +378,7 @@ class SearchResultsPage(BasePage):
         # Strategy 1: Wait for product items with increased timeout
         try:
             self.page.wait_for_selector(
-                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
+                self.PRODUCT_ITEM_SELECTOR,
                 timeout=10000  # Increased timeout for mobile
             )
 
@@ -410,6 +417,7 @@ class SearchResultsPage(BasePage):
                         '[id^="search-goods-item-"]',
                         '.productItem',
                         '.goods-item',
+                        '.mobile .home article > ul > li',
                         '.item',
                         '[class*="product"]',
                         '[class*="goods"]',
@@ -466,7 +474,8 @@ class SearchResultsPage(BasePage):
                             '.listAreaLi',
                             '[id^="search-goods-item-"]',
                             '.productItem',
-                            '.goods-item'
+                            '.goods-item',
+                            '.mobile .home article > ul > li'
                         ];
                         let items = [];
                         for (const selector of selectors) {{
@@ -477,7 +486,7 @@ class SearchResultsPage(BasePage):
                             }}
                         }}
                         if (items.length === 0) {{
-                            return Array.from({{length: {count}}}, (_, i) => `Product ${{i+1}}`);
+                            return [];
                         }}
                         const titles = [];
                         for (let i = 0; i < Math.min({count}, items.length); i++) {{
@@ -485,6 +494,8 @@ class SearchResultsPage(BasePage):
                             let title = '';
                             // Try multiple selectors for product title
                             const titleSelectors = [
+                                '.content-info__goods-title-box h3',
+                                '.content-info__goods-title-box',
                                 '.product-title',
                                 '.goods-title',
                                 '[class*="title"]',
@@ -525,12 +536,7 @@ class SearchResultsPage(BasePage):
                                         }} else {{
                                             title = lines[0].substring(0, 100);
                                         }}
-                                    }} else {{
-                                        title = `Product ${{i+1}}`;
-                                    }}
-                                }} else {{
-                                    title = `Product ${{i+1}}`;
-                                }}
+                            }}
                             }}
                             titles.push(title);
                         }}
@@ -544,7 +550,7 @@ class SearchResultsPage(BasePage):
         # Strategy 3: Final fallback with original selectors and longer timeout
         try:
             self.page.wait_for_selector(
-                ".listAreaLi, [id^='search-goods-item-'], .productItem, .goods-item",
+                self.PRODUCT_ITEM_SELECTOR,
                 timeout=8000
             )
             # Wait for overlays to disappear before counting
@@ -563,7 +569,9 @@ class SearchResultsPage(BasePage):
                 titles.append(title)
             return titles
         except Exception:
-            return [f"Product {i+1}" for i in range(limit)]  # Last resort fallback
+            # Never manufacture titles: a fake value can make a test report
+            # look like a relevance failure when extraction was the real issue.
+            return []
 
     def get_product_prices(self, limit: int = 30, exclude_ad: bool = False) -> List[int]:
         """Extracts and parses integer prices of displayed products."""
@@ -584,11 +592,24 @@ class SearchResultsPage(BasePage):
                     for (let i = 0; i < Math.min(items.length, limit); i++) {{
                         const item = items[i];
                         let price = null;
+                        const itemText = item.innerText || '';
+                        if ({str(exclude_ad).lower()} && /^Ad\\s*$/m.test(itemText)) {{
+                            continue;
+                        }}
+
+                        // Mobile titles contain model numbers and capacities.
+                        // Read the currency-marked sale price before examining
+                        // generic elements so those numbers are not misread.
+                        const currencyMatch = itemText.match(/(?:NT\\$|\\$)\\s*([\\d,]+)/);
+                        if (currencyMatch) {{
+                            price = parseInt(currencyMatch[1].replace(/,/g, ''), 10);
+                        }}
 
                         // Try common price selectors
                         const selectors = ['.price', '[class*="price"]', '.money', '[class*="money"]', 'span', 'b'];
 
                         for (const selector of selectors) {{
+                            if (price !== null) break;
                             const elements = item.querySelectorAll(selector);
                             for (let j = 0; j < Math.min(elements.length, 2); j++) {{
                                 const text = elements[j]?.innerText?.trim();
@@ -611,7 +632,6 @@ class SearchResultsPage(BasePage):
 
                         // Fallback: extract from item text
                         if (price === null) {{
-                            const itemText = item.innerText;
                             if (itemText) {{
                                 // Look for sequences of digits that look like prices
                                 const numMatches = itemText.match(/\\b\\d{{2,6}}\\b/g);
@@ -671,13 +691,16 @@ class SearchResultsPage(BasePage):
                 item_text = item.inner_text()
                 print(f"[DEBUG] Item {i} text: {item_text[:200]}")  # Limit to 200 chars
                 if item_text:
+                    if exclude_ad and item_text.lstrip().startswith("Ad"):
+                        continue
                     import re
-                    # Find all sequences of digits
-                    digit_matches = re.findall(r'\\b\\d{2,6}\\b', item_text)
-                    print(f"[DEBUG] Item {i} digit matches: {digit_matches}")
-                    for match in digit_matches:
+                    # Model numbers and capacities can be numeric. The first
+                    # currency-marked amount is the displayed sale price.
+                    price_matches = re.findall(r"(?:NT\$|\$)\s*([\d,]+)", item_text)
+                    print(f"[DEBUG] Item {i} currency prices: {price_matches}")
+                    for match in price_matches:
                         try:
-                            price_int = int(match)
+                            price_int = int(match.replace(",", ""))
                             if 50 <= price_int <= 500000 and price_int not in [2024, 2025, 12, 24, 60]:
                                 prices.append(price_int)
                                 print(f"[DEBUG] Item {i} accepted price: {price_int}")
