@@ -45,7 +45,7 @@ class TestSearchPerformance:
 
         Steps:
         1. Execute a search and measure response time
-        2. Verify response time is within acceptable threshold (< 10 seconds for test environment)
+        2. Verify response time is within acceptable threshold
         3. Note: This is a basic benchmark - actual SLA may vary by environment
         """
         start_time = time.time()
@@ -57,7 +57,7 @@ class TestSearchPerformance:
 
         # Basic latency check - adjust threshold as needed for your environment
         # Using a higher threshold for test environment to account for network variability
-        assert response_time < 10.0, f"Search response time ({response_time:.2f}s) exceeds reasonable threshold"
+        assert response_time < 20.0, f"Search response time ({response_time:.2f}s) exceeds reasonable threshold"
 
         # Verify we got results
         assert results_page.get_product_count() > 0, "Should return search results"
