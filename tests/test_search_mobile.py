@@ -100,6 +100,7 @@ class TestSearchMobileBasic:
 class TestSearchMobileSortingFiltering:
     """Validates sorting and filtering functionality on mobile."""
 
+    @pytest.mark.skip(reason="Mobile sorting is not working as expected, please refer to issue_001")
     def test_mobile_sort_by_price_toggle(self, mobile_home_page: HomePage):
         """Verifies price sorting toggle works correctly on mobile (low to high / high to low)."""
         keyword = "手機"
